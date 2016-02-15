@@ -37,23 +37,28 @@ module Healthcheck
     private
 
     def self.add_node(graph, app)
-      graph.get_node(app[:name]) || begin
-        node = graph.add_nodes(app[:name])
-        dependencies = app[:dependencies]||[]
-        dependencies.each do |dependency|
-          graph.add_edges(node, self.add_node(graph, dependency))
-        end
-        dependencies_ok = dependencies.reduce{|status, d| status && d[:status] }
-        if app[:status] != true
+      node = graph.get_node(app[:name]) || graph.add_nodes(app[:name])
+      dependencies = app[:dependencies]||[]
+      dependencies.each do |dependency|
+        graph.add_edges(node, self.add_node(graph, dependency))
+      end
+      dependencies_ok = dependencies.reduce{|status, d| status && d[:status] }
+      if dependencies.size==0 && node[:fontcolor].nil?
+        if app[:status] == true
+          node[:style] = 'filled'
+          node[:fillcolor] = 'green'
+          node[:fontcolor] = 'white'
+        elsif app[:status] != true
           node[:style] = 'filled'
           node[:fillcolor] = 'red'
           node[:fontcolor] = 'white'
-        elsif dependencies.size>0 && dependencies_ok != true
-          node[:style] = 'filled'
-          node[:fillcolor] = 'yellow'
         end
-        node
+      elsif dependencies.size>0 && dependencies_ok != true
+        node[:style] = 'filled'
+        node[:fillcolor] = 'yellow'
+        node[:fontcolor] = 'black'
       end
+      node
     end
   end
 end
