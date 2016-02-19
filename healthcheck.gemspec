@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", ">= 4.1"
   s.add_dependency "ruby-graphviz", ">= 1.2.2"
+  s.add_dependency "semverse", ">= 1.2.1"
 
   s.add_development_dependency "sqlite3"
 end
