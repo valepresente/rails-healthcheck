@@ -1,3 +1,5 @@
+require 'semverse/constraint'
+
 module Healthcheck
   module Check
     def self.check_version(current, expected)
