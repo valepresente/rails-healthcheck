@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    healthcheck (0.0.4)
+    healthcheck (0.0.5)
       rails (>= 4.1)
       ruby-graphviz (>= 1.2.2)
       semverse (>= 1.2.1)
