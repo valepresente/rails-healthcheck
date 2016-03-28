@@ -1,4 +1,5 @@
 require 'semverse/constraint'
+require 'semverse/version'
 
 module Healthcheck
   module Check
