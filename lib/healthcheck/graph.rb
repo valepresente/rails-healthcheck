@@ -40,15 +40,19 @@ module Healthcheck
       node = graph.get_node(app[:name]) || graph.add_nodes(app[:name])
       dependencies = app[:dependencies]||[]
       dependencies.each do |dependency|
-        graph.add_edges(node, self.add_node(graph, dependency))
+        node_dependency = self.add_node(graph, dependency)
+        if graph.each_edge.select{|edge| edge.node_one==node.id && edge.node_two==node_dependency.id}.size == 0
+          graph.add_edges(node, node_dependency)
+        end
       end
-      dependencies_ok = dependencies.reduce{|status, d| status && d[:status] }
+      dependencies_ok = dependencies.reduce(true){|status, d| status && d[:status] }
+      binding.pry if app[:name] == 'auth'
       if dependencies.size==0 && node[:fontcolor].nil?
         if app[:status] == true
           node[:style] = 'filled'
           node[:fillcolor] = 'green'
           node[:fontcolor] = 'white'
-        elsif app[:status] != true
+        elsif app[:status] == false
           node[:style] = 'filled'
           node[:fillcolor] = 'red'
           node[:fontcolor] = 'white'
@@ -57,6 +61,10 @@ module Healthcheck
         node[:style] = 'filled'
         node[:fillcolor] = 'yellow'
         node[:fontcolor] = 'black'
+      elsif dependencies.size>0 && dependencies_ok == true
+        node[:style] = 'filled'
+        node[:fillcolor] = 'green'
+        node[:fontcolor] = 'white'
       end
       node
     end

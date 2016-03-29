@@ -19,6 +19,7 @@ module Healthcheck
         end
         result << dependency
       end
+      @dependencies=result
       result
     end
 
@@ -26,8 +27,10 @@ module Healthcheck
 
     def get_http_data(dependency)
       dependency[:status] = ::Healthcheck::Check::Http.check(dependency)
-      (dependency[:dependencies]||[]).each do |_dependency|
-        get_http_data(_dependency.with_indifferent_access)
+      dependency[:dependencies] = (dependency[:dependencies]||[]).map do |_dependency|
+                clone = _dependency.with_indifferent_access
+        get_http_data(clone)
+        _dependency.merge(clone)
       end
     end
 

@@ -6,10 +6,11 @@ module Healthcheck
     def self.check(dependency)
       dependency[:errors] ||= {}
       begin
+        dependency[:dependencies] = []
         body = JSON.parse Net::HTTP.get(URI("#{dependency[:url]}/healthcheck"))
-        dependency[:dependencies] = body["dependencies"] || []
+        dependency[:dependencies] = body["dependencies"] if body["dependencies"]
         checked = true
-        if ::Healthcheck::Check.check_version(body["version"], dependency[:version])
+        if !::Healthcheck::Check.check_version(body["version"], dependency[:version])
           dependency[:errors][:version] ||= []
           dependency[:errors][:version] << "Version #{body[:version]} not satisfies #{dependency[:version]}";
           checked = false
