@@ -46,7 +46,6 @@ module Healthcheck
         end
       end
       dependencies_ok = dependencies.reduce(true){|status, d| status && d[:status] }
-      binding.pry if app[:name] == 'auth'
       if dependencies.size==0 && node[:fontcolor].nil?
         if app[:status] == true
           node[:style] = 'filled'
